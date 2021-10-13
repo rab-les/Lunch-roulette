@@ -1,16 +1,13 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "654321";
-$database = "lunch_roulette";
+require 'connection_vars.php';
 
-$conn = new mysqli($servername, $username, $password, $database);
-if ($conn->connect_error) {
-	die("Connection failed: " .$conn->connect_error);
+try {
+	$dsn = "mysql:host=$host;dbname=$db";
+	$dbh = new PDO($dsn, $user, $password);
+} catch (PDOException $e) {
+	print "Error!: " . $e->getMessage() . "<br/>";
+	die();
 }
-
-session_start();
-set_time_limit(60);
 ?>
 
 <!DOCTYPE html>
@@ -19,25 +16,23 @@ set_time_limit(60);
 <meta name="viewport" content="width=device-width, initial-scale=1">
  	<link href="../css/login.css" rel="stylesheet" type="text/css"/>
  	<script src="../js/login_utilities.js" type="text/javascript"></script>
- 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 </head>
 <body>
 
-<div id="log_form" class="modal">
+<div id="log_form" class="login">
 
-  <form class="modal-content animate" id="registrazione" method="post">
+  <form class="modal-content" id="registrazione" method="post">
     <div id="registration_data">
-			<label for="new_mail"><b>E-mail</b></label>
+			<label for="new_mail">E-mail</label>
 			<input type="email" placeholder="Inserisci la tua e-mail lavorativa" name="new_mail" id="new_mail" required>
 
-			<label for="new_uname"><b>Nickname</b></label>
+			<label for="new_uname">Nickname</label>
 			<input type="text" placeholder="Scegli il tuo nickname" name="new_uname" id="new_uname" required>
 
-			<label for="new_pwd"><b>Password</b></label>
+			<label for="new_pwd">Password</label>
 			<input type="password" placeholder="Inserisci la password" name="new_pwd" id="new_pwd" required>
 
-			<label for="confirm_new_pwd"><b>Conferma password</b></label>
+			<label for="confirm_new_pwd">Conferma password</label>
 			<input type="password" placeholder="Conferma la password" name="confirm_new_pwd" id="confirm_new_pwd" required>
     </div>
 

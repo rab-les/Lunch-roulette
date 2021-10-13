@@ -1,16 +1,13 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "654321";
-$database = "lunch_roulette";
+require 'connection_vars.php';
 
-$conn = new mysqli($servername, $username, $password, $database);
-if ($conn->connect_error) {
-	die("Connection failed: " .$conn->connect_error);
+try {
+	$dsn = "mysql:host=$host;dbname=$db";
+	$dbh = new PDO($dsn, $user, $password);
+} catch (PDOException $e) {
+	print "Error!: " . $e->getMessage() . "<br/>";
+	die();
 }
-
-session_start();
-set_time_limit(60);
 ?>
 
 <!DOCTYPE html>
@@ -19,24 +16,23 @@ set_time_limit(60);
 <meta name="viewport" content="width=device-width, initial-scale=1">
  	<link href="../css/login.css" rel="stylesheet" type="text/css"/>
  	<script src="../js/login_utilities.js" type="text/javascript"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 </head>
 <body>
 
-<div id="log_form" class="modal">
+<div id="log_form" class="login">
 
-  <form class="modal-content animate" id="accesso" method="post">
+  <form id="accesso" method="post">
     <div class="container">
-      <label for="uname"><b>Nickname</b></label>
+      <label for="uname">Nickname</label>
       <input type="text" placeholder="Inserisci il tuo nickname" name="uname" id="uname" required>
 
-      <label for="pwd"><b>Password</b></label>
+      <label for="pwd">Password</label>
       <input type="password" placeholder="Inserisci la password" name="pwd" id="pwd" required>
 
 			<div id="login_actions">
       	<button type="submit" id="accedi">Accedi</button>
 				<button type="reset" onclick="window.location.href='home.php'" id="quit1">Annulla</button>
+			</div>
     </div>
   </form>
 
