@@ -55,17 +55,17 @@ try {
 					FROM utente
 					WHERE username = '$username'
 					OR email = '$email'";
-				$result = $conn->query($sql1) or trigger_error($conn->error."[$sql1]");
+				$del = $dbh->prepare($sql1);
+				$del->execute();
 
-				if($result->num_rows === 0) {
-					$salt = substr(md5(microtime()),rand(0,26),32);
-					$password = $_REQUEST["new_pwd"].$salt;
-					$password = sha1($password);
-
-					$sql2 = "INSERT INTO utente(username, email, password, salt)
-						VALUES ('$username', '$email', '$password', '$salt')";
-					$conn->query($sql2) or trigger_error($conn->error."[$sql2]");
-					$conn->close();
+				if($del->rowCount() === 0) {
+					$password = $_REQUEST["new_pwd"];
+					$hashed_password = password_hash($password, PASSWORD_DEFAULT);
+					var_dump($hashed_password);
+					$sql2 = "INSERT INTO utente(username, email, pwd)
+						VALUES ('$username', '$email', '$hashed_password')";
+					$del = $dbh->prepare($sql2);
+					$del->execute();
 					header('Location: ./signup.php');
 				} else {
 					$message = "Esiste già un utente con stesso username o email.";

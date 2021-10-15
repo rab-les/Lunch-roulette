@@ -19,50 +19,54 @@ try {
 </head>
 <body>
 
-<div id="log_form" class="login">
+	<div id="log_form" class="login">
 
-  <form id="accesso" method="post">
-    <div class="container">
-      <label for="uname">Nickname</label>
-      <input type="text" placeholder="Inserisci il tuo nickname" name="uname" id="uname" required>
+	  <form id="accesso" method="post">
+	    <div class="container">
+	      <label for="uname">Nickname</label>
+	      <input type="text" placeholder="Inserisci il tuo nickname" name="uname" id="uname" required>
 
-      <label for="pwd">Password</label>
-      <input type="password" placeholder="Inserisci la password" name="pwd" id="pwd" required>
+	      <label for="pwd">Password</label>
+	      <input type="password" placeholder="Inserisci la password" name="pwd" id="pwd" required>
 
-			<div id="login_actions">
-      	<button type="submit" id="accedi">Accedi</button>
-				<button type="reset" onclick="window.location.href='home.php'" id="quit1">Annulla</button>
-			</div>
-    </div>
-  </form>
+				<label for="check">
+	        <input type="checkbox" checked="checked" id="check">Remember me
+	      </label>
 
-</div>
+				<div id="login_actions">
+	      	<button type="submit" id="accedi">Accedi</button>
+					<button type="reset" onclick="window.location.href='home.php'" id="quit1">Annulla</button>
+				</div>
+	    </div>
+	  </form>
 
-<?php
-		if (isset($_REQUEST["uname"]) && isset($_REQUEST["pwd"])) {
-			$user = $_REQUEST["uname"];
-			$sql = "SELECT username, password, salt
-				FROM utente
-				WHERE username = '$user'";
-			$result = $conn->query($sql) or trigger_error($conn->error."[$sql]");
-			$conn->close();
-			$row = $result->fetch_assoc();
-			$pwd = $_REQUEST["pwd"].$row["salt"];
-			$pwd = substr(sha1($pwd),0,32);
-			if ($row["username"] === $user && $row["password"] === $pwd) {
-				$_SESSION["username"] = $user;
-				$_SESSION["password"] = $row["password"];
-				if (isset($_REQUEST['rememberme'])) {
-					$_SESSION["rememberme"] = true;
+	</div>
+
+	<?php
+			if (isset($_REQUEST["uname"]) && isset($_REQUEST["pwd"])) {
+				$user = $_REQUEST["uname"];
+				$sql = "SELECT username, pwd
+					FROM utente
+					WHERE username = '$user'";
+
+				$del = $dbh->prepare($sql);
+				$del->execute();
+				$row = $del->fetch(PDO::FETCH_ASSOC);
+
+				if ($row["username"] === $user && password_verify($password, $row["pwd"])) {
+					$_SESSION["username"] = $user;
+					$_SESSION["pwd"] = $row["pwd"];
+					if (isset($_REQUEST["rememberme"])) {
+						$_SESSION["rememberme"] = true;
+					} else {
+						$_SESSION["rememberme"] = false;
+					}
 				} else {
-					$_SESSION["rememberme"] = false;
+					$message = "Non hai inserito correttamente i tuoi dati.";
+					echo "<script>alert('$message');</script>";
 				}
-			} else {
-				$message = "Non hai inserito correttamente i tuoi dati.";
-				echo "<script>alert('$message');</script>";
 			}
-		}
-	?>
+		?>
 
-</body>
-</html>
+	</body>
+	</html>

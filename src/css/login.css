@@ -46,6 +46,13 @@ input[type=text]:focus, input[type=password]:focus, input[type=email]:focus {
 	color: white;
 }
 
+input[type=checkbox] {
+	height: 20px;
+	width: 20px;
+	margin-right: 10px;
+	filter: invert(100%) hue-rotate(18deg) brightness(1.7);
+}
+
 #registrati, #accedi {
     background-color: #edb77d;
 		font-family: "Verdana";
