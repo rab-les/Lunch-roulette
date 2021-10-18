@@ -19,7 +19,6 @@ try {
 <title>Accedi a Lunch Roulette</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
  	<link href="../css/login.css" rel="stylesheet" type="text/css"/>
- 	<script src="../js/login_utilities.js" type="text/javascript"></script>
 </head>
 <body>
 
@@ -58,7 +57,7 @@ try {
 			$del->execute();
 			$row = $del->fetch(PDO::FETCH_ASSOC);
 
-			if ($row["username"] === $uname && password_verify($pwd, $row["pwd"])) {
+			if ($row && $row["username"] === $uname && password_verify($pwd, $row["pwd"])) {
 				$_SESSION["username"] = $uname;
 				$_SESSION["password"] = $row["pwd"];
 				if (isset($_REQUEST["rememberme"])) {
