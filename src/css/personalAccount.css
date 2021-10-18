@@ -1,7 +1,7 @@
 body {
-	background-image: url("../../img/cover_image.jpg");
+	background-image: url("../../img/account_background.jpg");
 	background-size: cover;
-	background-position: top center;
+	background-position: center center;
 	background-repeat: no-repeat;
 	background-attachment: fixed;
 }
@@ -12,14 +12,20 @@ label {
 	color: white;
 }
 
-.login {
+h1, h3, h5 {
+	font-family: "Brush Script MT";
+	color: white;
+	text-align: center;
+}
+
+.presentation {
 	background-color: #000;
 	width: 320px;
 	border-style: solid;
 	border-width: 3px;
 	border-color: #edb77d;
 	border-radius: 12px;
-	padding: 27px 15px 15px 15px;
+	padding: 15px;
 	position: absolute;
 	left: 50%;
 	top: 50%;
@@ -27,7 +33,7 @@ label {
 	transform: translate(-50%, -50%);
 }
 
-input[type=text], input[type=password], input[type=email] {
+input[type=text] {
 		background-color: inherit;
 		color: white;
     font-family: "Verdana";
@@ -42,51 +48,43 @@ input[type=text], input[type=password], input[type=email] {
     box-sizing: border-box;
 }
 
-input[type=text]:focus, input[type=password]:focus, input[type=email]:focus {
+input[type=text]:focus {
 	color: white;
 }
 
-input[type=checkbox] {
-	height: 20px;
-	width: 20px;
-	margin-right: 10px;
-	margin-bottom: 20px;
-	filter: invert(100%) hue-rotate(18deg) brightness(1.7);
-}
-
-#registrati, #accedi {
+#post_res_data, #newRestaurant {
     background-color: #edb77d;
 		font-family: "Verdana";
     color: white;
     padding: 14px;
+    margin: 12px 0 0 0;
     border: none;
     border-radius: 4px;
     cursor: pointer;
 		width: 100%;
 }
 
-#registrati:hover, #accedi:hover {
+#post_res_data:hover, #newRestaurant:hover {
 	background-color: #bf9000;
 }
 
-#quit1, #quit2 {
+#hide_form, #signout {
   background-color: red;
   font-family: "Verdana";
   color: white;
   padding: 14px;
-	margin: 0 0 12px 0;
+	margin: 12px 0 12px 0;
 	border: red;
 	border-radius: 4px;
 	width: 100%;
   cursor: pointer;
 }
 
-#quit1:hover, #quit2:hover {
+#hide_form:hover, #signout:hover {
   background-color: darkred;
 }
 
-#uname, #pwd, #accedi, #registrati,
-#new_mail, #new_uname, #new_pwd, #confirm_new_pwd {
+#res_name, #res_address {
 	margin-bottom: 15px;
 }
 
@@ -103,21 +101,25 @@ input[type=checkbox] {
     padding-top: 40px;
 }
 
-#log_form, #reg_form {
+#greetings {
   display: block;
+}
+
+#text_container, #form_container {
+	display: none;
 }
 
 .modal-content {
   background-color: #000;
   margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
   border: none;
-  width: 80%;
+  width: 80%; /* Could be more or less, depending on screen size */
 }
 
 .modal-content > div {
 	width: 100%;
 }
 
-#registrazione, #accesso {
-	margin: 0% auto auto auto;
+#proposta {
+  margin: 0% auto auto auto;
 }

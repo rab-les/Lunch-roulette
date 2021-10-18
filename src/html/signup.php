@@ -1,4 +1,7 @@
 <?php
+session_start();
+set_time_limit(60);
+
 require 'connection_vars.php';
 
 try {
@@ -13,15 +16,15 @@ try {
 <!DOCTYPE html>
 <html>
 <head>
+<title>Iscriviti a Lunch Roulette</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
  	<link href="../css/login.css" rel="stylesheet" type="text/css"/>
- 	<script src="../js/login_utilities.js" type="text/javascript"></script>
 </head>
 <body>
 
 <div id="log_form" class="login">
 
-  <form class="modal-content" id="registrazione" method="post">
+  <form class="modal-content" id="registrazione" method="post" autocomplete="off">
     <div id="registration_data">
 			<label for="new_mail">E-mail</label>
 			<input type="email" placeholder="Inserisci la tua e-mail lavorativa" name="new_mail" id="new_mail" required>
@@ -59,14 +62,17 @@ try {
 				$del->execute();
 
 				if($del->rowCount() === 0) {
-					$password = $_REQUEST["new_pwd"];
-					$hashed_password = password_hash($password, PASSWORD_DEFAULT);
-					var_dump($hashed_password);
+					$pwd = $_REQUEST["new_pwd"];
+					$hashed_password = password_hash($pwd, PASSWORD_DEFAULT);
+
 					$sql2 = "INSERT INTO utente(username, email, pwd)
 						VALUES ('$username', '$email', '$hashed_password')";
 					$del = $dbh->prepare($sql2);
 					$del->execute();
-					header('Location: ./signup.php');
+					$_SESSION["username"] = $username;
+					$_SESSION["password"] = $pwd;
+					header('Location: ./personalAccount.php');
+					exit();
 				} else {
 					$message = "Esiste già un utente con stesso username o email.";
 					echo "<script>alert('$message');</script>";

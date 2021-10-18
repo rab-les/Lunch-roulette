@@ -11,7 +11,7 @@
 
   <div class="functional">
     <h1>Benvenuto<br>
-    in Lunch Roulette!<h1>
+    in Lunch Roulette!</h1>
     <button type="button" id="signup" onclick="location.href='./signup.php'">Iscriviti</button>
     <button type="button" id="signin" onclick="location.href='./signin.php'">Accedi</button>
   </div>
