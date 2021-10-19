@@ -21,7 +21,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="../css/personalAccount.css" rel="stylesheet" type="text/css"/>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="../js/account_utilities.js" type="text/javascript"></script>
 </head>
 <body>
 
@@ -29,59 +29,40 @@
 
   <div class="presentation">
 
-		<script>
-			$("document").ready(function(){
-				$("#newRestaurant").click(function(){
-					$("#form_container").show();
-				});
-				$("#hide_form").click(function(){
-					$("#form_container").hide();
-				});
-				$("#post_res_data").click(function(){
-					$("#newRestaurant").prop("disabled", true);
-					$("#newRestaurant").unbind('mouseenter mouseleave');
-					$("#greetings").hide();
-					$("#form_container").hide();
-					$("#text_container").show();
-				});
-			});
-		</script>
-
 		<div id="greetings">
 			<h1>Benvenuto/a, <?php echo $nickname; ?><br>
 			Cosa vorresti fare?<h1>
 		</div>
 
-		<div id="form_container">
+    <button type="button" id="newRestaurant">Proponi locale</button>
 
-		    <div id="proposal_actions">
-					<button type="submit" id="post_res_data">Aggiungi</button>
-						<form class="modal-content" id="proposta" method="post" autocomplete="off">
-							<div id="restaurant_data">
-								<label for="res_name">Nome ristorante</label>
-								<input type="text" placeholder="Inserisci il nome del locale" name="res_name" id="res_name" required>
+		<div id="form_container" style="display: none;">
+				<form class="modal-content" id="proposta" method="post" autocomplete="off">
+					<div id="restaurant_data">
+						<label for="res_name">Nome ristorante</label>
+						<input type="text" placeholder="Inserisci il nome del locale" name="res_name" id="res_name" required>
 
-								<label for="res_address">Indirizzo</label>
-								<input type="text" placeholder="Inserisci l'indirizzo del locale" name="res_address" id="res_address" required>
-							</div>
-						</form>
-		      <button type="reset" id="hide_form">Torna indietro</button>
-		    </div>
-
+						<label for="res_address">Indirizzo</label>
+						<input type="text" placeholder="Inserisci l'indirizzo del locale" name="res_address" id="res_address" required>
+					</div>
+				</form>
+			<div id="proposal_actions">
+				<button type="submit" id="post_res_data">Aggiungi</button>
+		    <button type="reset" id="hide_form">Torna indietro</button>
+			</div>
 		</div>
 
-		<div id="text_container">
+		<div id="text_container" style="display: none;">
 
-			<h3>Complimenti!<br>
+			<h2>Complimenti!<br>
 			Il ristorante da te scelto è stato<br>
 			aggiunto alla lista dei locali di<br>
-			Lunch Roulette!</h3>
-			<h5>Potrai aggiungerne un altro<br>
-			alla tua prossima visita</h5>
+			Lunch Roulette!</h2>
+			<h3>Potrai aggiungerne un altro<br>
+			alla tua prossima visita</h3>
 
 		</div>
 
-    <button type="button" id="newRestaurant">Proponi locale</button>
     <button type="button" id="signout" onclick="location.href='./signout.php'">Esci dal servizio</button>
   </div>
 
@@ -98,9 +79,8 @@
 			$del->execute();
 
 			if($del->rowCount() === 0) {
-				$proposer = $_SESSION["username"];
 				$sql2 = "INSERT INTO ristorante(nomeRistorante, indirizzo, username)
-					VALUES ('$name', '$address', '$proposer')";
+					VALUES ('$name', '$address', '$nickname')";
 				$del = $dbh->prepare($sql2);
 				$del->execute();
 			} else {

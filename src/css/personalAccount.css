@@ -12,7 +12,7 @@ label {
 	color: white;
 }
 
-h1, h3, h5 {
+h1, h2, h3 {
 	font-family: "Brush Script MT";
 	color: white;
 	text-align: center;
@@ -101,12 +101,12 @@ input[type=text]:focus {
     padding-top: 40px;
 }
 
-#greetings {
-  display: block;
+#form_container {
+	margin-top: 25px;
 }
 
-#text_container, #form_container {
-	display: none;
+#greetings {
+  display: block;
 }
 
 .modal-content {
