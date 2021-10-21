@@ -2,7 +2,7 @@
 session_start();
 set_time_limit(60);
 
-require 'connection_vars.php';
+require '../connection_vars.php';
 
 try {
 	$dsn = "mysql:host=$host;dbname=$db";
@@ -18,7 +18,7 @@ try {
 <head>
 <title>Accedi a Lunch Roulette</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
- 	<link href="../css/login.css" rel="stylesheet" type="text/css"/>
+ 	<link href="../../css/login.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 
