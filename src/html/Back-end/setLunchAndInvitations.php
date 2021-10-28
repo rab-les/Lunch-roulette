@@ -1,5 +1,7 @@
 <?php
   session_start();
+  ob_start();
+	ob_end_flush();
 
   include 'dotEnv.php';
   include 'getDateTime.php';
@@ -25,12 +27,24 @@
   $invitations = getenv('NUMERO');
 
   $separators = substr_count($u_days, '/');
-  $days = explode($u_days, '/', $separators + 1);
-  $hours = explode($hour, '-', 2);
-  /*Rimescolo i valori dell'array con shuffle() ed estraggo il primo elemento
-    con array_pop(), ottenendo un giorno a caso tra quelli a disposizione*/
-  shuffle($days);
-  $lunch_day = array_pop($days);
+  if ($separators > 0) {
+    $days = explode('/', $u_days, $separators + 1);
+    /*Rimescolo i valori dell'array con shuffle() ed estraggo il primo elemento
+      con array_pop(), ottenendo un giorno a caso tra quelli a disposizione*/
+    shuffle($days);
+    $lunch_day = array_pop($days);
+  } else {
+    $lunch_day = $u_days;
+  }
+  $separators = substr_count($u_days, '-');
+  if ($separators === 1) {
+    $hours = explode('-', $hour, $separators + 1);
+  } else {
+    echo "Error! La variabile d'ambiente ORARIO non è impostata correttamente.<br>
+      Formato corretto: hh:mm-hh:mm";
+    die();
+  }
+
   $dateStart = getDateTimeString($lunch_day, $hours[0]);
   $dateEnd = getDateTimeString($lunch_day, $hours[1]);
   /*Seleziono un ristorante a caso dalla relativa tabella*/
@@ -55,7 +69,7 @@
   ));
   /*Per precauzione, controllo che il numero delle righe nella tabella UTENTE
     non sia minore del numero di inviti che devo inviare*/
-  $sql4 = "SELECT COUNT(*) FROM utente";
+  $sql2 = "SELECT COUNT(*) FROM utente";
   $del = $dbh->prepare($sql2);
   $del->execute();
   $numRows = $del->fetchColumn();
@@ -73,49 +87,51 @@
     $sql4 = "SELECT LAST_INSERT_ID()";
     $del = $dbh->prepare($sql4);
     $del->execute();
-    $id_lunch = $del->fetch(PDO::FETCH_ASSOC);
-    /*Seleziono nickname e indirizzi di un numero di invitati pari al valore
-      della variabile d'ambiente pescando a caso nella tabella UTENTE*/
+    $array_fetched = $del->fetch(PDO::FETCH_ASSOC);
+    $id_lunch = array_shift($array_fetched);
+    /*Seleziono i nickname di tutti i membri registrati nella tabella UTENTE,
+      rimescolo l'array risultante e conservo solo un numero di valori pari
+      alla quantità di inviti che devo spedire*/
     $sql5 = "SELECT username, email
       FROM utente
       ORDER BY RAND()
       LIMIT ?";
     $del = $dbh->prepare($sql5);
-    $del->execute($invitations);
-    $guests = $del->fetchColumn();
-    $addresses = $del->fetchColumn(1);
+    $del->bindValue(1, intval($invitations), PDO::PARAM_INT);
+    $del->execute();
+    $guests = $del->fetchAll(PDO::FETCH_KEY_PAIR);
     /*Preparo la query per inserire gli inviti nel db fuori dal ciclo, tenendo
       come "incognita" solo il nickname dell'utente.*/
     $sql6 = "INSERT INTO invito(id_pranzo, nomeRistorante, username)
       VALUES ('$id_lunch', '$placename', ?)";
-    /*Preparo il messaggio di posta elettronica di cui invierò una copia a tutti
-      gli invitati al pranzo*/
-    $mail = new PHPMailer;
 
-    $mail->isSMTP();
-    $mail->Host = 'smtp.gmail.com';
-    $mail->Port = 587;
-    $mail->SMTPSecure = 'tls';
-    $mail->SMTPAuth = true;
-
-    $mail->Username = "enakridarbuk@gmail.com";
-    $mail->Password = "bukkin88";
-
-    $mail->setFrom('no-reply@lunchroulette.com', 'Lunch Roulette Service');
-    $mail->isHTML(true);
-
-    $ical = $ics->to_string();
-    $mail->addStringAttachment("$ical", "invito.ics", "base64", "text/calendar;
-      charset=utf-8; method=REQUEST");
-
-    $mail->Subject = "Invito a pranzo - Lunch Roulette";
-
-    for ($i = 0; $i < $invitations; $i++) {
+    foreach ($guests as $nick => $address) {
       $del = $dbh->prepare($sql6);
-      $del->execute($guests[$i]);
+      $del->bindValue(1, $nick, PDO::PARAM_STR);
+      $del->execute();
 
-      $mail->addAddress($addresses[$i], $guests[$i]);
-      $mail->Body = "<b>" . $guests[i] . "</b>, hai ricevuto un invito a pranzo!";
+      /*Inizializzo il messaggio di posta elettronica di cui invierò una copia a
+        tutti gli invitati al pranzo*/
+      $mail = new PHPMailer;
+      $mail->isSMTP();
+      $mail->Host = 'smtp.gmail.com';
+      $mail->Port = 587;
+      $mail->SMTPSecure = 'tls';
+      $mail->SMTPAuth = true;
+
+      $mail->Username = "noreply.lunchroulette@gmail.com";
+      $mail->Password = "504o7Z7@";
+
+      $mail->setFrom('no-reply@lunchroulette.com', 'Lunch Roulette Service');
+      $mail->isHTML(true);
+
+      $ical = $ics->to_string();
+      $mail->addStringAttachment("$ical", "invito.ics", "base64", "text/calendar;
+        charset=utf-8; method=REQUEST");
+
+      $mail->Subject = "Invito a pranzo - Lunch Roulette";
+      $mail->addAddress($address, $nick);
+      $mail->Body = "<b>" . $nick . "</b>, hai ricevuto un invito a pranzo!";
       $mail->AltBody = "Hai ricevuto un invito a pranzo!";
 
       try {
@@ -128,7 +144,10 @@
     }
   } else {
     print "Errore!: La ricerca di un ristorante non ha restituito nomi validi
-      e/o non ci sono abbastanza iscritti al serivzio per organizzare un pranzo.";
+      e/o non ci sono abbastanza iscritti al servizio per organizzare un pranzo.";
   	die();
   }
+
+	session_destroy();
+	exit();
 ?>
