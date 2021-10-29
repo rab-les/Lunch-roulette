@@ -63,7 +63,8 @@
   $columns = $del->fetch(PDO::FETCH_ASSOC);
   if ($columns && isset($columns["nomeRistorante"]) && isset($columns["indirizzo"])) {
     $placename = $columns["nomeRistorante"];
-    $placedata = $columns["nomeRistorante"] . ", " . $columns["indirizzo"];
+    $placeaddress = $columns["indirizzo"];
+    $placedata = $placename . ", " . $placeaddress;
   } else {
     echo "Error! Non ci sono ristoranti registrati nel database dell'applicazione.";
     die();

@@ -51,7 +51,10 @@ try {
 			&& isset($_REQUEST["new_pwd"]) && isset($_REQUEST["confirm_new_pwd"])) {
 
 			if ($_REQUEST["new_pwd"] === $_REQUEST["confirm_new_pwd"]) {
-				$username = $_REQUEST["new_uname"];
+				/*Gli apostrofi sono un carattere problematico in MariaDB. Sono costretto
+				  ad eliminarli per semplificare il processo di registrazione*/
+				$prov_uname = $_REQUEST["new_uname"];
+				$username = str_replace("'", "", $prov_uname);
 				$email = $_REQUEST["new_mail"];
 
 				$sql1 = "SELECT *

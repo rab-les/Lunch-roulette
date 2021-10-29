@@ -44,8 +44,12 @@
   <?php
     if (isset($_REQUEST["res_name"]) && isset($_REQUEST["res_address"])) {
 
-      $name = $_REQUEST["res_name"];
-      $address = $_REQUEST["res_address"];
+			/*Gli apostrofi causano problemi in MariaDB. Prima di registrare nome ed
+			  indirizzo li elimino. Gli effetti sulla leggibilità saranno minimi*/
+      $prov_name = $_REQUEST["res_name"];
+			$name = str_replace("'", "", $prov_name);
+      $prov_address = $_REQUEST["res_address"];
+			$address = str_replace("'", "", $prov_address);
 
       $sql1 = "SELECT *
         FROM ristorante
