@@ -57,9 +57,9 @@ try {
 			$del->execute();
 			$row = $del->fetch(PDO::FETCH_ASSOC);
 
-			if ($row && $row["username"] === $uname && password_verify($pwd, $row["pwd"])) {
+			if ($row && $row["username"] === $uname && password_verify($pwd, $row["password"])) {
 				$_SESSION["username"] = $uname;
-				$_SESSION["password"] = $row["pwd"];
+				$_SESSION["password"] = $row["password"];
 				if (isset($_REQUEST["rememberme"])) {
 					$_SESSION["rememberme"] = true;
 				} else {

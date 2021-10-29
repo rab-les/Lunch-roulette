@@ -36,8 +36,8 @@
   } else {
     $lunch_day = $u_days;
   }
-  $separators = substr_count($u_days, '-');
-  if ($separators === 1) {
+  $separators = substr_count($hour, '-');
+  if ($separators == 1) {
     $hours = explode('-', $hour, $separators + 1);
   } else {
     echo "Error! La variabile d'ambiente ORARIO non è impostata correttamente.<br>
@@ -54,9 +54,14 @@
     LIMIT 1";
   $del = $dbh->prepare($sql1);
   $del->execute();
-  $placename = $del->fetchColumn();
-  $address = $del->fetchColumn(1);
-  $placedata = $placename . ", " . $address;
+  $columns = $del->fetch(PDO::FETCH_ASSOC);
+  if ($columns && isset($columns["nomeRistorante"]) && isset($columns["indirizzo"])) {
+    $placename = $columns["nomeRistorante"];
+    $placedata = $columns["nomeRistorante"] . ", " . $columns["indirizzo"];
+  } else {
+    echo "Error! Non ci sono ristoranti registrati nel database dell'applicazione.";
+    die();
+  }
   /*Ora che ho i dati necessari, inizializzo il file .ics da spedire tramite
     messaggio di posta elettronica agli invitati*/
   $ics = new ICS(array(
@@ -74,7 +79,7 @@
   $del->execute();
   $numRows = $del->fetchColumn();
 
-  if (!empty($placedata) && $numRows >= $invitations) {
+  if ($numRows >= $invitations) {
     /*Non inserisco un codice identificativo perché la colonna della tabella
       è dotata della proprietà auto_increment che ci pensa al posto mio*/
     $sql3 = "INSERT INTO pranzo(nomeRistorante, numPartecipanti, giorno, orario)
@@ -136,7 +141,7 @@
 
       try {
         $mail->send();
-        echo "Message has been sent successfully";
+        echo "Il messaggio è stato inviato correttamente.<br>";
       } catch (Exception $e) {
         echo "Mailer error: " . $mail->ErrorInfo;
         die();
