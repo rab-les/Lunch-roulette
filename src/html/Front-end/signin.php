@@ -49,7 +49,7 @@ try {
 		if (isset($_REQUEST["uname"]) && isset($_REQUEST["pwd"])) {
 			$uname = $_REQUEST["uname"];
 			$pwd = $_REQUEST["pwd"];
-			$sql = "SELECT username, pwd
+			$sql = "SELECT username, password
 				FROM utente
 				WHERE username = '$uname'";
 

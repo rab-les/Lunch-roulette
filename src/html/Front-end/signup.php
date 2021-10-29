@@ -65,7 +65,7 @@ try {
 					$pwd = $_REQUEST["new_pwd"];
 					$hashed_password = password_hash($pwd, PASSWORD_DEFAULT);
 
-					$sql2 = "INSERT INTO utente(username, email, pwd)
+					$sql2 = "INSERT INTO utente(username, email, password)
 						VALUES ('$username', '$email', '$hashed_password')";
 					$del = $dbh->prepare($sql2);
 					$del->execute();
