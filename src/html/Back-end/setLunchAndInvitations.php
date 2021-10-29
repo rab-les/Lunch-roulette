@@ -25,23 +25,29 @@
   $u_days = getenv('GIORNI');
   $hour = getenv('ORARIO');
   $invitations = getenv('NUMERO');
-
-  $separators = substr_count($u_days, '/');
-  if ($separators > 0) {
-    $days = explode('/', $u_days, $separators + 1);
-    /*Rimescolo i valori dell'array con shuffle() ed estraggo il primo elemento
-      con array_pop(), ottenendo un giorno a caso tra quelli a disposizione*/
-    shuffle($days);
-    $lunch_day = array_pop($days);
+  /*Controllo che tutte le variabili d'ambiente abbiano un valore diverso da ""*/
+  if (!empty($u_days) && !empty($hour) && !empty($invitations)) {
+    $separators = substr_count($u_days, '/');
+    if ($separators > 0) {
+      $days = explode('/', $u_days, $separators + 1);
+      /*Rimescolo i valori dell'array con shuffle() ed estraggo il primo elemento
+        con array_pop(), ottenendo un giorno a caso tra quelli a disposizione*/
+      shuffle($days);
+      $lunch_day = array_pop($days);
+    } else {
+      $lunch_day = $u_days;
+    }
+    /*Separo l'ora di inizio della pausa pranzo da quella di fine*/
+    $separators = substr_count($hour, '-');
+    if ($separators == 1) {
+      $hours = explode('-', $hour, $separators + 1);
+    } else {
+      echo "Error! La variabile d'ambiente ORARIO non è impostata correttamente.<br>
+        Formato corretto: hh:mm-hh:mm";
+      die();
+    }
   } else {
-    $lunch_day = $u_days;
-  }
-  $separators = substr_count($hour, '-');
-  if ($separators == 1) {
-    $hours = explode('-', $hour, $separators + 1);
-  } else {
-    echo "Error! La variabile d'ambiente ORARIO non è impostata correttamente.<br>
-      Formato corretto: hh:mm-hh:mm";
+    echo "Error! Una o più variabili nel file doc/variables.env non sono state inizializzate.";
     die();
   }
 
@@ -150,7 +156,7 @@
   } else {
     print "Errore!: La ricerca di un ristorante non ha restituito nomi validi
       e/o non ci sono abbastanza iscritti al servizio per organizzare un pranzo.";
-  	die();
+    die();
   }
 
 	session_destroy();
